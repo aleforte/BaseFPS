@@ -43,7 +43,3 @@ Seems like directly referencing CommonUI files/assets in C++ code causes an asse
         - `Platform.Trait.SupportsWindowedMode`
         - `Platform.Trait.SupportsChangingAudioOutputDevice`
         - `Platform.Trait.NeedsBrightnessAdjustment`
-
-### Level Notes (TODO -- add HUD to screen via GameMode)
-- Set `L_MainMenu` as **Game Default Map**
-- For any existing levels, edit *Level Blueprint* so that it calls `UXBaseFPSUIManagerSubsystem::AddDefaultHUDLayoutForPlayer` on **BeginPlay** (...this should be called by the GameMode in a formal project)
