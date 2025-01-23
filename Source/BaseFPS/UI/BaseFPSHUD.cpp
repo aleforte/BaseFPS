@@ -17,11 +17,23 @@
 
 ABaseFPSHUD::ABaseFPSHUD()
 {
-	static ConstructorHelpers::FClassFinder<UBaseFPSHUDLayout> HUDLayoutClassFinder(TEXT("/Game/UI/HUD/W_DefaultHUDLayout"));
-	PawnHUDLayoutClass = HUDLayoutClassFinder.Class;
+	// Structure to hold one-time initialization
+	struct FConstructorStatics
+	{
+		ConstructorHelpers::FClassFinder<UBaseFPSHUDLayout> HUDLayoutClass;
+		ConstructorHelpers::FClassFinder<UCommonActivatableWidget> EscapeMenuClass;
+		ConstructorHelpers::FClassFinder<UCommonActivatableWidget> ScoreboardClass;
+		FConstructorStatics()
+			: HUDLayoutClass(TEXT("/Game/UI/HUD/W_DefaultHUDLayout"))
+			, EscapeMenuClass(TEXT("/Game/UI/HUD/W_InGameMenu"))
+			, ScoreboardClass(TEXT("/Game/UI/Shared/Widgets/LoadingScreen/W_LoadingScreen"))
+		{}
+	};
+	static FConstructorStatics ConstructorStatics;
 	
-	static ConstructorHelpers::FClassFinder<UCommonActivatableWidget> EscapeMenuClassFinder(TEXT("/Game/UI/HUD/W_InGameMenu"));
-	EscapeMenuClass = EscapeMenuClassFinder.Class;
+	PawnHUDLayoutClass = ConstructorStatics.HUDLayoutClass.Class;
+	EscapeMenuClass = ConstructorStatics.EscapeMenuClass.Class;
+	ScoreboardClass = ConstructorStatics.ScoreboardClass.Class;
 }
 
 void ABaseFPSHUD::PostInitializeComponents()
@@ -217,10 +229,27 @@ void ABaseFPSHUD::ToggleInGameMenu()
 	if (EscapeMenu)
 	{
 		UCommonUIExtensions::PopContentFromLayer(EscapeMenu);
-		EscapeMenu = nullptr;
+		EscapeMenu = nullptr; // always clear cached widgets when removed from screen
 	}
 	else if (EscapeMenuClass && PlayerOwner)
 	{
-		UCommonUIExtensions::PushContentToLayer_ForPlayer(PlayerOwner->GetLocalPlayer(), FrontendTags::TAG_UI_LAYER_GAME_MENU, EscapeMenuClass);
+		EscapeMenu = UCommonUIExtensions::PushContentToLayer_ForPlayer(PlayerOwner->GetLocalPlayer(), FrontendTags::TAG_UI_LAYER_GAME_MENU, EscapeMenuClass);
+	}
+}
+
+void ABaseFPSHUD::ShowScoreboard()
+{
+	if (ScoreboardClass && PlayerOwner)
+	{
+		Scoreboard = UCommonUIExtensions::PushContentToLayer_ForPlayer(PlayerOwner->GetLocalPlayer(), FrontendTags::TAG_UI_LAYER_GAME_MENU, ScoreboardClass);
+	}
+}
+
+void ABaseFPSHUD::HideScoreboard()
+{
+	if (Scoreboard)
+	{
+		UCommonUIExtensions::PopContentFromLayer(Scoreboard);
+		Scoreboard = nullptr; // always clear cached widgets when removed from screen
 	}
 }

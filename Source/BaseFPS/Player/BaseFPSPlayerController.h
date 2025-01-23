@@ -36,6 +36,9 @@ protected:
 	UInputAction* ToggleMenuAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
+    UInputAction* ShowScoreboardAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input", meta = (AllowPrivateAccess = "true"))
@@ -86,6 +89,8 @@ public:
 	/* -------------- Character Actions -------------- */
 protected:
 	void ToggleInGameMenu();
+	void ShowScoreboard();
+	void HideScoreboard();
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);

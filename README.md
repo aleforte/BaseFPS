@@ -1,5 +1,7 @@
 # BaseFPS (Prototype)
 
+![banner](./docs/banner.png)
+
 ## Plugins
 - CommonUI
 - CommonUser

@@ -20,6 +20,7 @@ ABaseFPSPlayerController::ABaseFPSPlayerController(const FObjectInitializer& Obj
 	struct FConstructorStatics
 	{	
 		ConstructorHelpers::FObjectFinder<UInputAction> ToggleMenuAction;
+		ConstructorHelpers::FObjectFinder<UInputAction> ShowScoreboardAction;
 		ConstructorHelpers::FObjectFinder<UInputAction> MoveAction;
 		ConstructorHelpers::FObjectFinder<UInputAction> LookAction;
 		ConstructorHelpers::FObjectFinder<UInputAction> JumpAction;
@@ -32,6 +33,7 @@ ABaseFPSPlayerController::ABaseFPSPlayerController(const FObjectInitializer& Obj
 		ConstructorHelpers::FObjectFinder<UInputAction> PrevWeaponAction;
 		FConstructorStatics()
 			: ToggleMenuAction(TEXT("/Game/Input/Actions/IA_ToggleMenu"))
+			, ShowScoreboardAction(TEXT("/Game/Input/Actions/IA_ShowScoreboard"))
 			, MoveAction(TEXT("/Game/Input/Actions/IA_Move"))
 			, LookAction(TEXT("/Game/Input/Actions/IA_Look_Mouse"))
 		    , JumpAction(TEXT("/Game/Input/Actions/IA_Jump"))
@@ -47,6 +49,7 @@ ABaseFPSPlayerController::ABaseFPSPlayerController(const FObjectInitializer& Obj
 	static FConstructorStatics ConstructorStatics;
 
 	ToggleMenuAction = ConstructorStatics.ToggleMenuAction.Object;
+	ShowScoreboardAction = ConstructorStatics.ShowScoreboardAction.Object;
 	MoveAction = ConstructorStatics.MoveAction.Object;
 	LookAction = ConstructorStatics.LookAction.Object;
 	JumpAction = ConstructorStatics.JumpAction.Object;
@@ -64,14 +67,6 @@ ABaseFPSCharacter* ABaseFPSPlayerController::GetMyCharacter() const
 	return MyCharacter;
 }
 
-void ABaseFPSPlayerController::ToggleInGameMenu()
-{
-	if (ABaseFPSHUD* BaseFPSHUD = Cast<ABaseFPSHUD>(MyHUD))
-	{
-		BaseFPSHUD->ToggleInGameMenu();
-	}
-}
-
 void ABaseFPSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -79,9 +74,11 @@ void ABaseFPSPlayerController::SetupInputComponent()
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		//In-Game Menu Toggle
+		//Menus & Scoreboard
 		EnhancedInputComponent->BindAction(ToggleMenuAction, ETriggerEvent::Triggered, this, &ThisClass::ToggleInGameMenu);
-
+		EnhancedInputComponent->BindAction(ShowScoreboardAction, ETriggerEvent::Started, this, &ThisClass::ShowScoreboard);
+		EnhancedInputComponent->BindAction(ShowScoreboardAction, ETriggerEvent::Completed, this, &ThisClass::HideScoreboard);
+		
 		//Moving & Looking
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
@@ -161,6 +158,30 @@ FText ABaseFPSPlayerController::GetNameTextForInteractActionKey(uint32 KeyIndex)
 		}
 	}
 	return FText::GetEmpty();
+}
+
+void ABaseFPSPlayerController::ToggleInGameMenu()
+{
+	if (ABaseFPSHUD* BaseFPSHUD = Cast<ABaseFPSHUD>(MyHUD))
+	{
+		BaseFPSHUD->ToggleInGameMenu();
+	}
+}
+
+void ABaseFPSPlayerController::ShowScoreboard()
+{
+	if (ABaseFPSHUD* BaseFPSHUD = Cast<ABaseFPSHUD>(MyHUD))
+	{
+		BaseFPSHUD->ShowScoreboard();
+	}
+}
+
+void ABaseFPSPlayerController::HideScoreboard()
+{
+	if (ABaseFPSHUD* BaseFPSHUD = Cast<ABaseFPSHUD>(MyHUD))
+	{
+		BaseFPSHUD->HideScoreboard();
+	}
 }
 
 void ABaseFPSPlayerController::Move(const FInputActionValue& Value)

@@ -73,6 +73,22 @@ protected:
 
 public:
 	void ToggleInGameMenu();
+
+	/************************************************************************/
+	/* Scoreboard                                                           */
+	/************************************************************************/
+protected:
+	/** pointer to the currently on-screen escape menu, set to NULL if not open */
+	UPROPERTY(Transient)
+	TObjectPtr<UCommonActivatableWidget> Scoreboard;
+
+	/** The escape menu class for this HUD */
+	UPROPERTY(EditDefaultsOnly, Category="HUD")
+	TSubclassOf<UCommonActivatableWidget> ScoreboardClass;
+	
+public:
+	void ShowScoreboard();
+	void HideScoreboard();
 	
 	/************************************************************************/
 	/* Delegate Handles                                                     */

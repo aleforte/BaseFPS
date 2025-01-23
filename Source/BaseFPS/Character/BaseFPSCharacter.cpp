@@ -898,7 +898,7 @@ AInventory* ABaseFPSCharacter::CreateInventory(TSubclassOf<AInventory> NewInvCla
 
 void ABaseFPSCharacter::DestroyAllInventory()
 {
-	for (int32 i = 0; i < InventorySize; i++)
+	for (int32 i = 0; i < Inventory.Num(); i++)
 	{
 		if (Inventory[i])
 		{
